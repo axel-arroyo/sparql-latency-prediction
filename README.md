@@ -1,4 +1,4 @@
-## Implementación de la arquitectura de Neo adaptada para SPARQL
+## SPARQL query execution time prediction using Deep Learning companion Git repository
 
 ### Usage
 Jupyter Notebook ``ModelTreeConvSparql.ipynb`` trains and evaluates the model proposed in our work using the test set data. This first divides training data, and cleans and prepares the data.
