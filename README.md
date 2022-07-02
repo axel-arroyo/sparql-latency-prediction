@@ -1,6 +1,24 @@
 ## SPARQL query execution time prediction using Deep Learning companion Git repository
 
 ### Usage
+
+To reproduce the experiments download the dataset from:
+- kaggle:
+```
+kaggle datasets download -d danielcasals/sparql-queries-performance-prediction
+unzip sparql-queries-performance-prediction.zip
+mv sparql-queries-performance-prediction/ds_test_pred_filtered.csv sparql-queries-performance-prediction/ds_test.csv               
+mv sparql-queries-performance-prediction/ds_trainval_pred_filtered.csv  sparql-queries-performance-prediction/ds_train_val.csv
+```
+- huggingface datasets:
+```
+git lfs install
+git clone https://huggingface.co/datasets/dacasals/sparql-wikidata-queries
+```
+Run the train script with:
+```
+usage: train.py [-h] --data-dir DATA_DIR --output-dir OUTPUT_DIR [--seed SEED] [--val-rate VAL_RATE] [--data-source DATA_SOURCE] [--verbose VERBOSE] [--with-aec WITH_AEC]
+```
 Jupyter Notebook ``ModelTreeConvSparql.ipynb`` trains and evaluates the model proposed in our work using the test set data. This first divides training data, and cleans and prepares the data.
 
 Class ```Regression``` in [model_trees_algebra.py](model_trees_algebra.py), has the functions for preparing data and training and evaluating the model we propose.

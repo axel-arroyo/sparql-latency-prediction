@@ -4,8 +4,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler
 
 import data_preprocessing
-from model_trees_algebra import NeoRegression as NeoRegression
-from model_trees_algebra_aec import NeoRegression as AECNeoRegression
+from Models.model_trees_algebra import NeoRegression as NeoRegression
+from Models.model_trees_algebra_aec import NeoRegression as AECNeoRegression
 import numpy as np
 import pandas as pd
 

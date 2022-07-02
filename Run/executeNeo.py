@@ -3,7 +3,7 @@ import pandas as pd
 URL = "~/Desktop/"
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
-from model_trees_algebra import NeoRegression
+from Models.model_trees_algebra import NeoRegression
 
 
 class BaoTrainingException(Exception):

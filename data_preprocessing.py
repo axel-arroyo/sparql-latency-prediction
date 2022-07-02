@@ -116,7 +116,7 @@ def prepare_datasets(
     )
     data_train_val = pd.read_csv(
         osp.join(data_dir, ds_train_file_name), delimiter="ᶶ", engine="python"
-    ).sample(3000, random_state=1)
+    )
 
     print("Shape: train_data", data_train_val.shape)
 
@@ -137,28 +137,6 @@ def prepare_datasets(
     ds_test.to_csv(test_path, index=False, sep="ᶶ")
     logging.info(f"Datasets created: {train_path}, {val_path}, {test_path}")
     return ds_train, ds_val, ds_test
-    # x_test_query = ds_test[LIST_QUERY_COLUMNS]
-    #
-    # x_test_tree = ds_test["trees"].values
-    # y_test = ds_test["time"].values
-    # print("Shape: train_data", ds_trainval.shape)
-    # # Datasets
-    # ds_train, ds_val = split_train_data(ds_trainval, val_rate=val_rate, seed=seed)
-    # x_train_query = ds_train[LIST_QUERY_COLUMNS]
-    # x_val_query = ds_val[LIST_QUERY_COLUMNS]
-    #
-    # x_train_tree = ds_train["trees"].values
-    # x_val_tree = ds_val["trees"].values
-    #
-    # y_train = ds_train["time"].values
-    # y_val = ds_val["time"].values
-    #
-    # maximotrain = (
-    #     x_train_query["json_cardinality"]
-    #         .apply(lambda x: json.loads(x))
-    #         .apply(lambda x: getmax(x))
-    #         .max()
-    # )
 
 
 def pred2index_dict(x, pred_to_index, max_cardinality):
