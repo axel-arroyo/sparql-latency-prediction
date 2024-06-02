@@ -426,7 +426,7 @@ class BaoRegression:
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter("[%(asctime)s] %(levelname)s:%(name)s:%(message)s")
         # file logger
-        fh = logging.FileHandler('./aarroyo/output.log', mode='w')
+        fh = logging.FileHandler('./output.log', mode='w')
         fh.setLevel(logging.INFO)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
@@ -868,7 +868,7 @@ class NeoRegression:
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter("[%(asctime)s] %(levelname)s:%(name)s:%(message)s")
         # file logger
-        fh = logging.FileHandler('./aarroyo/output.log', mode='w')
+        fh = logging.FileHandler('./output.log', mode='w')
         fh.setLevel(logging.INFO)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
