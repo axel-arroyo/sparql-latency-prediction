@@ -96,6 +96,9 @@ def train_and_save_model(
     reg.save(osp.join(output_path, "regressor"))
 
     # Prediction
+    _, _, y_val = reg.json_loads(
+        x_val_tree, x_val_query.values, y_val
+    )
     preds_val = reg.predict_raw_data(x_val_tree, x_val_query.values)
     rmse = np.sqrt(mean_squared_error(y_val, preds_val))
     print("RMSE in VAL: {}".format(rmse))
@@ -106,6 +109,9 @@ def train_and_save_model(
         osp.join(output_path, "model_with_aec_scatter_val"),
     )
 
+    _, _, y_test = reg.json_loads(
+        x_test_tree, x_test_query.values, y_test
+    )
     preds_test = reg.predict_raw_data(x_test_tree, x_test_query.values)
     rmsetest = np.sqrt(mean_squared_error(y_test, preds_test))
     print("RMSE in TEST: {}".format(rmsetest))
