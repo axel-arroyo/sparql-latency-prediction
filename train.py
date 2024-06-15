@@ -12,6 +12,11 @@ import pandas as pd
 import argparse
 import os.path as osp
 
+# Increase the limit of the csv field size to avoid the error "field larger than field limit (131072)"
+import sys
+import csv
+csv.field_size_limit(sys.maxsize)
+
 
 def train_and_save_model(
     ds_train, ds_val, ds_test, output_path, aec=None, verbose=True
@@ -69,7 +74,7 @@ def train_and_save_model(
             epochs=2, verbose=verbose, output_path=output_path, aec=aec
         )
     else:
-        reg = NeoRegression(epochs=2, verbose=verbose, output_path=output_path, aec=aec)
+        reg = NeoRegression(epochs=100, verbose=verbose, output_path=output_path, aec=aec)
 
     # Fit the transformer tree data
     reg.fit_transform_tree_data(ds_train, ds_val, ds_test)

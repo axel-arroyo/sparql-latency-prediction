@@ -153,7 +153,6 @@ class NeoRegression(BaseRegression):
 
         losses = []
 
-        assert np.mean(y_val) > 5, "y_val must be in real scale"
         print("Max epochs to run:", self.epochs)
         for epoch in range(self.epochs):
             self.net.train()
