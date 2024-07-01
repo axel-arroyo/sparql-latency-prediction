@@ -127,6 +127,10 @@ def train_and_save_model(
         osp.join(output_path, "model_with_aec_scatter_test"),
     )
 
+    # Save predictions on test dataset along with real values
+    preds_test_df = pd.DataFrame({'Real Value': y_test, 'Predicted Value': preds_test})
+    preds_test_df.to_csv(osp.join(output_path, 'predictions_test.csv'), index=False)
+
     return reg
 
 
