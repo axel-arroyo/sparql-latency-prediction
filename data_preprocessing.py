@@ -40,7 +40,7 @@ LIST_QUERY_COLUMNS = [
     "has_slice",
     "max_slice_limit",
     "max_slice_start",
-] + ADDITIONAL_QUERY_COLUMNS
+]
 
 CARDINALITY_COLUMNS = ["json_cardinality"]
 
