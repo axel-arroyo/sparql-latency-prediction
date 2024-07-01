@@ -7,6 +7,12 @@ import pandas as pd
 import os.path as osp
 import json
 
+ADDITIONAL_QUERY_COLUMNS = [
+    'projectVarCount', 'joinVertexDegreeMean', 'joinVertexDegreeMedian',
+    'bgpCount', 'joinVertexCount', 'tpCount', 'tpInBgpCountMean',
+    'tpInBgpCountMedian', 'tpInBgpCountMin', 'tpInBgpCountMax'
+]
+
 LIST_QUERY_COLUMNS = [
     "filter_bound",
     "filter_contains",
@@ -34,7 +40,7 @@ LIST_QUERY_COLUMNS = [
     "has_slice",
     "max_slice_limit",
     "max_slice_start",
-]
+] + ADDITIONAL_QUERY_COLUMNS
 
 CARDINALITY_COLUMNS = ["json_cardinality"]
 
