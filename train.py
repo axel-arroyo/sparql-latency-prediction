@@ -128,8 +128,12 @@ def train_and_save_model(
     )
 
     # Save predictions on test dataset along with real values
-    preds_test_df = pd.DataFrame({'Real Value': y_test, 'Predicted Value': preds_test})
+    preds_test_df = pd.DataFrame({'Real Value': ds_test["time"].values, 'Predicted Value': preds_test})
     preds_test_df.to_csv(osp.join(output_path, 'predictions_test.csv'), index=False)
+
+    # Save RMSE on test dataset to a file
+    with open(osp.join(output_path, 'rmse_test.txt'), 'w') as f:
+        f.write(f'{rmsetest}')
 
     return reg
 
