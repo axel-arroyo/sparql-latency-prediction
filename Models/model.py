@@ -478,8 +478,9 @@ class BaoRegression:
         pairs = list(zip(X, y))
         pairs_val = list(zip(X_val, y_val))
 
-        dataset = DataLoader(pairs, batch_size=128, num_workers=0, shuffle=True, collate_fn=self.collate)
-        dataset_val = DataLoader(pairs_val, batch_size=128, num_workers=0, shuffle=True, collate_fn=self.collate)
+        device = 'cuda:0' if CUDA else 'cpu'
+        dataset = DataLoader(pairs, batch_size=128, num_workers=0, shuffle=True, collate_fn=lambda x: self.collate(x, device))
+        dataset_val = DataLoader(pairs_val, batch_size=128, num_workers=0, shuffle=True, collate_fn=lambda x: self.collate(x, device))
 
         self.__log("Initial input channels of tree model:", self.__in_channels)
         self.__net = BaoNet(
@@ -614,7 +615,8 @@ class BaoRegression:
 
         X = self.__tree_transform.transform(X)
         pairs = list(zip(X, y))
-        dataset = DataLoader(pairs, batch_size=128, num_workers=0, shuffle=True, collate_fn=self.collate)
+        device = 'cuda:0' if CUDA else 'cpu'
+        dataset = DataLoader(pairs, batch_size=128, num_workers=0, shuffle=True, collate_fn=lambda x: self.collate(x, device))
         results = []
         self.__net.eval()
         with torch.no_grad():
@@ -645,32 +647,32 @@ class BaoRegression:
         return results
 
 
-    def index2sparse(self, tree, sizeindexes):
+    def index2sparse(self, tree, sizeindexes, device='cpu'):
         resp = []
         for el in tree:
             if type(el[0]) == tuple:
-                resp.append(self.index2sparse(el, sizeindexes))
+                resp.append(self.index2sparse(el, sizeindexes, device))
             else:
                 a = np.array(el)
                 b = np.zeros((a.size, sizeindexes))
                 b[np.arange(a.size), a] = 1
                 onehot = np.sum(b, axis=0, keepdims=True)[0]
                 # Split in 9 because it are de init index for predicates, @see SparqlTreeBuilder.get_index_seq
-                onehot2pred = from_numpy(onehot[9:]).to(float32)
+                onehot2pred = from_numpy(onehot[9:]).to(float32).to(device)
                 pred = self.__aec_net.encoder(onehot2pred).cpu().detach().numpy()
                 resp.append(np.concatenate((onehot[:9], pred)))
         return tuple(resp)
 
-    def collate(self, x):
+    def collate(self, x, device='cpu'):
         """Preprocess inputs values, transform index2vec values, them predict aec.encoder to dimensionality reduction"""
         trees = []
         targets = []
         sizeindexes= len(self.get_pred())
         for tree, target in x:
-            trees.append(self.index2sparse(tree, sizeindexes))
+            trees.append(self.index2sparse(tree, sizeindexes, device))
             targets.append(target)
 
-        targets = torch.tensor(targets)
+        targets = torch.tensor(targets).to(device)
         return trees, targets
     
     def collate2(self, x):
