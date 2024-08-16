@@ -28,7 +28,6 @@ from early_stopping import EarlyStopping
 from net import Autoencoder, NeoNet, BaoNet
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from custom_loss import CustomMSELoss
-from memory_profiler import profile
 
 CUDA = torch.cuda.is_available()
 
@@ -270,7 +269,8 @@ class BaoRegression:
                  optimizer=None,
                  figimage_size=(10, 8),
                  tree_activation_tree=nn.LeakyReLU,
-                 tree_activation_dense=nn.LeakyReLU
+                 tree_activation_dense=nn.LeakyReLU,
+                 output_path="./"
                  ):
         if tree_units_dense is None:
             tree_units_dense = [32, 28]
@@ -296,6 +296,7 @@ class BaoRegression:
         self.__early_stop_initial_patience = early_stop_initial_patience
         # This is the output units for encoder of autoencoder model.
         self.__in_channels_neo_net = in_channels_neo_net
+        self.__output_path = output_path
 
         self.__best_model = None
         self.__optimizer = optimizer
@@ -426,7 +427,7 @@ class BaoRegression:
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter("[%(asctime)s] %(levelname)s:%(name)s:%(message)s")
         # file logger
-        fh = logging.FileHandler('./output.log', mode='w')
+        fh = logging.FileHandler(self.__output_path + "output.log", mode='w')
         fh.setLevel(logging.INFO)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
@@ -467,8 +468,9 @@ class BaoRegression:
             self.__aec_net = aec_training.fit(self.__aec_file)
         else:
             self.__log("Loading pretrained Autoencoder", "...")
-            self.__aec_net = Autoencoder(io_dim, self.get_pred())
-            self.__aec_net.load_state_dict(torch.load(self.__aec_file))
+            # self.__aec_net = Autoencoder(io_dim, self.get_pred())
+            self.__aec_net = Autoencoder(io_dim)
+            # self.__aec_net.load_state_dict(torch.load(self.__aec_file))
             if CUDA:
                 self.__aec_net = self.__aec_net.cuda()
             self.__aec_net.eval()
@@ -516,8 +518,7 @@ class BaoRegression:
         import random
         id_label = "".join([str(a) for a in random.sample(range(20), 5)])
 
-        assert np.mean(y_val) > 5, "y_val must be in real scale"
-        self.__log("Epochs to run:", 4)
+        self.__log("Epochs to run:", self.__epochs)
         for epoch in range(self.__epochs):
             self.__net.train()
             loss_accum = 0
@@ -587,7 +588,7 @@ class BaoRegression:
                     y_pred_val,
                     y_real_val,
                     "Scatter real latency vs prediction on: ",
-                    "neo_with_aec_scatter_" + id_label + "_train_val_epoch_" + "{:03d}".format(epoch),
+                    self.__output_path + "neo_with_aec_scatter_" + id_label + "_train_val_epoch_" + "{:03d}".format(epoch),
                     history,
                     max_refference=int(max_y + 10),
                     figsize=self.__figimage_size,
@@ -604,6 +605,22 @@ class BaoRegression:
             for (x, y_val) in val_loader:
                 y_pred = self.__net(x)
                 results.extend(list(zip(self.__pipeline.inverse_transform(y_pred.cpu().detach().numpy()), y_val)))
+        return results
+    
+    def predict_custom(self, X, y):
+        X = self.json_loads(X)
+        X = [self.fix_tree(x) for x in X]
+        y = np.array(y)
+
+        X = self.__tree_transform.transform(X)
+        pairs = list(zip(X, y))
+        dataset = DataLoader(pairs, batch_size=128, num_workers=0, shuffle=True, collate_fn=self.collate)
+        results = []
+        self.__net.eval()
+        with torch.no_grad():
+            for (x, _) in dataset:
+                y_pred = self.__net(x)
+                results.extend(self.__pipeline.inverse_transform(y_pred.cpu().detach().numpy()))
         return results
 
     def predict_raw_data(self, trees, queries):
@@ -639,7 +656,7 @@ class BaoRegression:
                 b[np.arange(a.size), a] = 1
                 onehot = np.sum(b, axis=0, keepdims=True)[0]
                 # Split in 9 because it are de init index for predicates, @see SparqlTreeBuilder.get_index_seq
-                onehot2pred = from_numpy(onehot[9:]).to(float32).cuda()
+                onehot2pred = from_numpy(onehot[9:]).to(float32)
                 pred = self.__aec_net.encoder(onehot2pred).cpu().detach().numpy()
                 resp.append(np.concatenate((onehot[:9], pred)))
         return tuple(resp)

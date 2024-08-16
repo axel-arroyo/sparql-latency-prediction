@@ -35,7 +35,7 @@ class SparqlTreeBuilder:
         cadena_list = cadena.split("ᶲ")
 
         if cadena_list[0] not in self.__preds_to_index:
-            print("OTHER_TPF", cadena_list)
+            # print("OTHER_TPF", cadena_list)
             row.append(self.__preds_to_index["OTHER_TPF"])
         else:
             row.append(self.__preds_to_index[cadena_list[0]])
@@ -43,7 +43,7 @@ class SparqlTreeBuilder:
             if el in self.__preds_to_index:
                 row.append(self.__preds_to_index[el])
             else:
-                print("OTHER_PRED", el)
+                # print("OTHER_PRED", el)
                 row.append(self.__preds_to_index["OTHER_PRED"])
         #         print(len(row))
         self.lista_samples_aec.append(row)
