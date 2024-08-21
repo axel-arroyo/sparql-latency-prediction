@@ -382,7 +382,7 @@ class BaseRegression:
                             self.pipeline.inverse_transform(
                                 y_pred.cpu().detach().numpy()
                             ),
-                            y_val,
+                            y_val.cpu().detach().numpy(),
                         )
                     )
                 )
@@ -473,7 +473,7 @@ class BaseRegression:
             )
             targets.append(target)
 
-        targets = torch.tensor(targets)
+        targets = torch.tensor(np.array(targets))
         return trees, targets
 
     def collate_predict_with_card(self, x):

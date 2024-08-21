@@ -178,7 +178,7 @@ class NeoRegression(BaseRegression):
                             self.pipeline.inverse_transform(
                                 y_pred.cpu().detach().numpy()
                             ),
-                            y_train,
+                            y_train.cpu().detach().numpy(),
                         )
                     )
                 )

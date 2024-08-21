@@ -9,6 +9,7 @@ from Models.model_trees_algebra_aec import NeoRegression as AECNeoRegression
 from Models.model import BaoRegression
 import numpy as np
 import pandas as pd
+import torch.nn as nn
 
 import argparse
 import os.path as osp
@@ -168,7 +169,22 @@ def train_and_save_model(
             epochs=2, verbose=verbose, output_path=output_path, aec=aec
         )
     else:
-        reg = NeoRegression(epochs=100, verbose=verbose, output_path=output_path)
+        reg = NeoRegression(
+            aec={'train_aec': False, 'use_aec': True,'aec_file': '', 'aec_epochs': 200},
+            epochs=400,
+            maxcardinality=max_cardinality,
+            in_channels_neo_net=512,
+            tree_units=[512, 256, 128],
+            tree_units_dense=[64, 32],
+            early_stop_patience=10,
+            early_stop_initial_patience=30,
+            tree_activation_tree=nn.LeakyReLU,
+            tree_activation_dense=nn.ReLU,
+            optimizer={'optimizer': "Adam",'args':{"lr":0.00015}},
+            figimage_size=(18,18),
+            start_history_from_epoch=3, 
+            verbose=verbose, 
+            output_path=output_path)
 
     # Fit the transformer tree data
     reg.fit_transform_tree_data(ds_train, ds_val, ds_test)
