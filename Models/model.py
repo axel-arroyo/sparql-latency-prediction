@@ -525,7 +525,7 @@ class BaoRegression:
             loss_accum = 0
             results_train = []
             for (x, y_train) in dataset:
-                y_train_scaled = torch.tensor(self.__pipeline.transform(y_train.reshape(-1, 1)).astype(np.float32))
+                y_train_scaled = torch.tensor(self.__pipeline.transform(y_train.cpu().detach().numpy().reshape(-1, 1)).astype(np.float32))
                 if CUDA:
                     y_train_scaled = y_train_scaled.cuda()
                 y_pred = self.__net(x)
@@ -537,7 +537,7 @@ class BaoRegression:
                 loss_accum += lost_item
                 #                 print('{} Epoch {}, Training loss batch {}'.format(datetime.datetime.now(), epoch, lost_item))
                 results_train.extend(
-                    list(zip(self.__pipeline.inverse_transform(y_pred.cpu().detach().numpy()), y_train)))
+                    list(zip(self.__pipeline.inverse_transform(y_pred.cpu().detach().numpy()), y_train.cpu().detach().numpy())))
             #                 y_train_scaled.detach()
             #                 del y_train_scaled
             #                 torch.cuda.empty_cache()
@@ -605,7 +605,7 @@ class BaoRegression:
         with torch.no_grad():
             for (x, y_val) in val_loader:
                 y_pred = self.__net(x)
-                results.extend(list(zip(self.__pipeline.inverse_transform(y_pred.cpu().detach().numpy()), y_val)))
+                results.extend(list(zip(self.__pipeline.inverse_transform(y_pred.cpu().detach().numpy()), y_val.cpu().detach().numpy())))
         return results
     
     def predict_custom(self, X, y):

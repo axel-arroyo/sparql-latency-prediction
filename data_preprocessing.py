@@ -8,9 +8,7 @@ import os.path as osp
 import json
 
 ADDITIONAL_QUERY_COLUMNS = [
-    'projectVarCount', 'joinVertexDegreeMean', 'joinVertexDegreeMedian',
-    'bgpCount', 'joinVertexCount', 'tpCount', 'tpInBgpCountMean',
-    'tpInBgpCountMedian', 'tpInBgpCountMin', 'tpInBgpCountMax'
+    'projectVarCount', 'bgpCount', 'joinVertexCount', 'tpCount'
 ]
 
 LIST_QUERY_COLUMNS = [

@@ -68,7 +68,7 @@ def train_and_save_model_bao(
     max_cardinality = data_preprocessing.get_max_cardinaliy(x_train_query_json_card)
 
     verbose = True
-    reg = BaoRegression(epochs=2, verbose=verbose, output_path=output_path)
+    reg = BaoRegression(epochs=100, verbose=verbose, output_path=output_path)
 
     # Fit the transformer tree data
     reg.fit_transform_tree_data(ds_train, ds_val, ds_test)
@@ -300,5 +300,5 @@ if __name__ == "__main__":
         if args.with_aec
         else None
     )
-    #train_and_save_model(ds_train, ds_val, ds_test, output, aec=aec)
-    train_and_save_model_bao(ds_train, ds_val, ds_test, output + "/")
+    train_and_save_model(ds_train, ds_val, ds_test, output, aec=aec)
+    #train_and_save_model_bao(ds_train, ds_val, ds_test, output + "/")
